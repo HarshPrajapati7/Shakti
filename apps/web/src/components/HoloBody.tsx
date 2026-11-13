@@ -31,7 +31,7 @@ function hologramMaterial() {
 }
 
 function Body({ zones, selected, onSelect }: { zones: Zone[]; selected?: string; onSelect?: (id: string) => void }) {
-  const { scene, animations } = useGLTF("/models/body.glb")
+  const { scene, animations } = useGLTF(`${import.meta.env.BASE_URL}models/body.glb`)
   const root = useRef<THREE.Group>(null)
   const { actions } = useAnimations(animations, root)
   const mat = useMemo(hologramMaterial, [])
@@ -116,4 +116,4 @@ export default function HoloBody({ zones, selected, onSelect, interactive = true
   )
 }
 
-useGLTF.preload("/models/body.glb")
+useGLTF.preload(`${import.meta.env.BASE_URL}models/body.glb`)

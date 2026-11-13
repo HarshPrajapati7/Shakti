@@ -8,7 +8,7 @@ const Console = lazy(() => import("./pages/Console"))
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, "")}>
       <Suspense fallback={<div className="grid h-dvh place-items-center label">Loading console…</div>}>
         <Routes>
           <Route path="/" element={<Landing />} />

@@ -66,7 +66,7 @@ export default function Landing() {
 
       {/* Hero: NASA public-domain footage from the ISS */}
       <section className="relative h-dvh min-h-[640px] overflow-hidden">
-        <video className="absolute inset-0 size-full object-cover" src="/media/earth-orbit.mp4" poster="/media/earth-orbit.jpg"
+        <video className="absolute inset-0 size-full object-cover" src={`${import.meta.env.BASE_URL}media/earth-orbit.mp4`} poster={`${import.meta.env.BASE_URL}media/earth-orbit.jpg`}
           autoPlay muted loop playsInline preload="metadata" aria-hidden />
         <div className="absolute inset-0 bg-[linear-gradient(to_top,#04060a_2%,rgba(4,6,10,.55)_38%,rgba(4,6,10,.15)_70%,rgba(4,6,10,.5))]" />
         <div className="relative z-10 flex h-full flex-col justify-end px-6 pb-20 md:px-12 md:pb-24">
