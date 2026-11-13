@@ -1,0 +1,34 @@
+\begin{table}
+\caption{WESAD leave-one-subject-out stress detection (15 subjects). subject_z is transductive (upper reference only).}
+\label{tab:stress_results}
+\begin{tabular}{lrrrr}
+\toprule
+ & macro-F1 & F1 sd & bal. acc & AUROC \\
+\midrule
+binary|wrist|lgbm_population & 0.877 & 0.140 & 0.882 & 0.987 \\
+binary|wrist|lgbm_subject_z & 0.946 & 0.106 & 0.944 & 0.991 \\
+binary|wrist|lgbm_personal & 0.903 & 0.133 & 0.902 & 0.995 \\
+binary|wrist|cnn_personal & 0.919 & 0.122 & 0.932 & 0.980 \\
+binary|chest|lgbm_population & 0.911 & 0.094 & 0.910 & 0.989 \\
+binary|chest|lgbm_subject_z & 0.950 & 0.059 & 0.954 & 0.990 \\
+binary|chest|lgbm_personal & 0.919 & 0.136 & 0.921 & 0.997 \\
+binary|chest|cnn_personal & 0.952 & 0.078 & 0.960 & 0.992 \\
+binary|chest+wrist|lgbm_population & 0.880 & 0.141 & 0.889 & 0.995 \\
+binary|chest+wrist|lgbm_subject_z & 0.971 & 0.052 & 0.970 & 1.000 \\
+binary|chest+wrist|lgbm_personal & 0.921 & 0.147 & 0.926 & 0.997 \\
+binary|chest+wrist|cnn_personal & 0.944 & 0.080 & 0.951 & 0.990 \\
+3class|wrist|lgbm_population & 0.650 & 0.189 & 0.690 & 0.873 \\
+3class|wrist|lgbm_subject_z & 0.747 & 0.188 & 0.761 & 0.904 \\
+3class|wrist|lgbm_personal & 0.751 & 0.144 & 0.787 & 0.962 \\
+3class|wrist|cnn_personal & 0.770 & 0.178 & 0.792 & 0.927 \\
+3class|chest|lgbm_population & 0.678 & 0.134 & 0.711 & 0.916 \\
+3class|chest|lgbm_subject_z & 0.821 & 0.171 & 0.832 & 0.954 \\
+3class|chest|lgbm_personal & 0.773 & 0.203 & 0.798 & 0.972 \\
+3class|chest|cnn_personal & 0.854 & 0.112 & 0.857 & 0.983 \\
+3class|chest+wrist|lgbm_population & 0.653 & 0.144 & 0.697 & 0.915 \\
+3class|chest+wrist|lgbm_subject_z & 0.778 & 0.179 & 0.796 & 0.965 \\
+3class|chest+wrist|lgbm_personal & 0.796 & 0.164 & 0.812 & 0.984 \\
+3class|chest+wrist|cnn_personal & 0.833 & 0.129 & 0.843 & 0.972 \\
+\bottomrule
+\end{tabular}
+\end{table}

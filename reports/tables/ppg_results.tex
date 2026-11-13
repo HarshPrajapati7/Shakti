@@ -1,0 +1,20 @@
+\begin{table}
+\caption{PPG-DaLiA leave-one-subject-out heart-rate error (15 subjects).}
+\label{tab:ppg_results}
+\begin{tabular}{lrrr}
+\toprule
+ & MAE (bpm) & MAE sd & RMSE \\
+\midrule
+argmax & 17.844 & 8.058 & 28.156 \\
+tracker & 13.949 & 4.997 & 22.810 \\
+ours cnn-only & 5.180 & 2.150 & 10.325 \\
+ours online & 4.782 & 1.674 & 9.197 \\
+ours offline & 4.135 & 1.669 & 8.437 \\
+ours v2 cnn-only & 4.843 & 1.961 & 9.842 \\
+ours v2 online & 4.459 & 1.458 & 8.659 \\
+ours v2 offline & 3.817 & 1.387 & 7.804 \\
+published DeepPPG [Reiss 2019] & 7.650 & NaN & NaN \\
+published BeliefPPG online [Bieri 2023] & 3.570 & NaN & NaN \\
+\bottomrule
+\end{tabular}
+\end{table}

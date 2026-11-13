@@ -1,0 +1,16 @@
+\begin{table}
+\caption{GRAVITY-HEART ablation on 59 held-out maneuvers from 10 subjects (PhysioNet PRCP).}
+\label{tab:gravity_ablation}
+\begin{tabular}{lrrrrrrr}
+\toprule
+ & RMSE HR (bpm) & RMSE MAP (mmHg) & |err| plateau dHR & |err| plateau dMAP & |err| MAP nadir & PI90 cov HR & PI90 cov MAP \\
+\midrule
+zero response & 13.219 & 7.719 & 12.471 & 5.504 & 11.077 & NaN & NaN \\
+population FIR & 7.925 & 7.024 & 5.625 & 4.554 & 6.904 & NaN & NaN \\
+population physics & 8.051 & 7.610 & 5.599 & 5.222 & 7.979 & NaN & NaN \\
+personal (weak prior) & 6.255 & 6.314 & 2.838 & 3.584 & 8.390 & NaN & NaN \\
+personal (hier. prior) & 6.209 & 6.257 & 2.718 & 3.597 & 8.076 & 0.864 & 0.850 \\
+personal, 1 calibration & 6.429 & 6.907 & 3.001 & 4.054 & 8.545 & 0.827 & 0.733 \\
+\bottomrule
+\end{tabular}
+\end{table}

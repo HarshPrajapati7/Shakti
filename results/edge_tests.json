@@ -1,0 +1,67 @@
+[
+ {
+  "test": "gravity: microgravity (u=0) keeps HR and MAP at baseline",
+  "pass": true,
+  "detail": null
+ },
+ {
+  "test": "gravity: pooled volume and HR rise monotonically with gravity (0, Moon, Mars, Earth)",
+  "pass": true,
+  "detail": "pool mL [0.0, 92.0, 211.0, 557.0]  dHR [0.0, 1.1, 2.7, 12.9]"
+ },
+ {
+  "test": "gravity: impossible volume deficit (3 L) and 3 g stay finite and bounded",
+  "pass": true,
+  "detail": "min MAP 2.3 mmHg"
+ },
+ {
+  "test": "gravity: orthostatic volume tolerance is ordered Earth <= Mars <= Moon",
+  "pass": true,
+  "detail": "tolerated deficit mL [160.0, 460.0, 560.0]"
+ },
+ {
+  "test": "gravity: JSON test vector reproduces (for website / TypeScript port)",
+  "pass": true,
+  "detail": "max abs diff 0.0128"
+ },
+ {
+  "test": "gravity: NaN baseline is rejected rather than silently propagated",
+  "pass": true,
+  "detail": "NaN in -> NaN out (input validation required in the app)"
+ },
+ {
+  "test": "ppg: all-zero (flat / unworn sensor) input gives a valid, finite distribution",
+  "pass": true,
+  "detail": "model=ppg_hr_cnn_v2_seed0.pt  sd on flat input 37.8 bpm"
+ },
+ {
+  "test": "ppg: belief tracker ignores a single spectral outlier window",
+  "pass": true,
+  "detail": "estimate at outlier window 70.4 bpm (truth 70)"
+ },
+ {
+  "test": "ppg: forward filter stays normalised with an all-zero likelihood",
+  "pass": true,
+  "detail": null
+ },
+ {
+  "test": "ppg: uncertainty increases when the PPG channel is corrupted (real windows)",
+  "pass": true,
+  "detail": "mean predictive SD clean 4.9 -> corrupted 27.9 bpm"
+ },
+ {
+  "test": "stress: LightGBM accepts NaN features (missing sensor) and returns valid probabilities",
+  "pass": true,
+  "detail": "p(stress) all-NaN rows [0.0, 0.0, 0.0, 0.0]"
+ },
+ {
+  "test": "stress: CNN with a dropped-out channel still returns a valid distribution",
+  "pass": true,
+  "detail": null
+ },
+ {
+  "test": "stress: calibration windows never scored (no personal-baseline leakage)",
+  "pass": true,
+  "detail": "900 calibration windows excluded from every test set"
+ }
+]

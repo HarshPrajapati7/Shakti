@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "astra-health"
+version = "0.1.0"
+description = "ASTRA-HEALTH research models: GRAVITY-HEART orthostatic digital twin, PPG heart-rate and wearable stress models"
+requires-python = ">=3.9"
+dependencies = ["numpy<2", "scipy", "pandas", "scikit-learn", "wfdb", "numba", "lightgbm", "matplotlib"]
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -1,0 +1,16 @@
+# ASTRA-HEALTH pinned environment (tested: Windows 11, Python 3.9.13, RTX 4050 6 GB, CUDA 12.1 wheels)
+# Install torch first with the CUDA index:
+#   pip install torch==2.2.2 --index-url https://download.pytorch.org/whl/cu121
+numpy==1.26.4
+scipy==1.13.1
+pandas==2.3.3
+scikit-learn==1.6.1
+matplotlib==3.9.4
+wfdb==4.3.1
+numba==0.60.0
+lightgbm==4.6.0
+onnx==1.16.2
+nbformat==5.10.4
+nbconvert==7.17.0
+ipykernel==6.31.0
+notebook==7.2.2

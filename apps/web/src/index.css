@@ -1,0 +1,45 @@
+@import "tailwindcss";
+@import "@fontsource-variable/archivo/wdth.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+
+/* One system: near-black canvas, white type, a single hologram blue, status colours used only for status. */
+@theme {
+  --font-sans: "Archivo Variable", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --color-void: #04060a;
+  --color-panel: #0a0e15;
+  --color-line: #1a2230;
+  --color-ink: #e9edf2;
+  --color-mute: #8792a2;
+  --color-holo: #5cc8ff;
+  --color-ok: #3fd49a;
+  --color-watch: #ffb340;
+  --color-alert: #ff4a3d;
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* shadcn/ui tokens mapped onto the same palette */
+:root {
+  --background: var(--color-void);
+  --foreground: var(--color-ink);
+  --card: var(--color-panel);
+  --card-foreground: var(--color-ink);
+  --primary: var(--color-ink);
+  --primary-foreground: var(--color-void);
+  --muted-foreground: var(--color-mute);
+  --border: var(--color-line);
+  --ring: var(--color-holo);
+  color-scheme: dark;
+}
+
+html { background: var(--color-void); color: var(--color-ink); -webkit-font-smoothing: antialiased; }
+body { font-family: var(--font-sans); font-variation-settings: "wdth" 100; }
+.display { font-stretch: 75%; font-variation-settings: "wdth" 75; letter-spacing: -0.01em; text-transform: uppercase; line-height: 0.92; }
+.label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-mute); }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+:focus-visible { outline: 2px solid var(--color-holo); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
