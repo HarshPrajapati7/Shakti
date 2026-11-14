@@ -2,6 +2,17 @@
 
 **Astronaut health monitoring software by Team Star Busters** (NASA Space Apps 2026).
 
+## Run it
+
+**Just use it (Windows 10/11):** download [sakti.exe](https://github.com/HarshPrajapati7/Shakti/releases/download/v1.0.0/sakti.exe) and double-click it.
+
+**Web version (any OS, needs Node 20+):**
+```powershell
+cd apps\web; npm ci; npm run dev     # open http://localhost:5173
+```
+
+**Build the desktop app from source (needs Node 20+, Rust, Visual Studio C++ Build Tools):** `.\build-app.ps1`
+
 ## Desktop app
 ```powershell
 .\build-app.ps1        # builds the UI and the native Tauri app -> sakti.exe
