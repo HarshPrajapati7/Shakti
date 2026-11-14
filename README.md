@@ -1,4 +1,13 @@
-# ASTRA-HEALTH
+# Sakti
+
+**Astronaut health monitoring software by Team Star Busters** (NASA Space Apps 2026).
+
+## Desktop app
+```powershell
+.\build-app.ps1        # builds the UI and the native Tauri app -> sakti.exe
+```
+The app opens with a loading screen, offers a 14-day sample crew record, and runs every model natively (Rust).
+
 
 **Mission health intelligence for astronauts far from a doctor.** NASA Space Apps Challenge 2026: *Create Health Monitoring Software for Astronauts on Space Missions*.
 

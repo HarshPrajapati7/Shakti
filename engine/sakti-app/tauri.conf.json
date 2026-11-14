@@ -16,6 +16,7 @@
         "minWidth": 1100,
         "minHeight": 700,
         "center": true,
+        "maximized": true,
         "backgroundColor": "#17181b"
       }
     ],

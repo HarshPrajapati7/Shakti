@@ -19,7 +19,7 @@ function holoMaterial(map: THREE.Texture | null) {
   m.onBeforeCompile = (s) => {
     s.uniforms.uT = { value: 0 }; s.uniforms.uC = { value: BLUE }; m.userData.s = s
     s.vertexShader = s.vertexShader.replace("#include <common>", "#include <common>\nvarying float vY; varying vec3 vN; varying vec3 vV;")
-      .replace("#include <project_vertex>", "#include <project_vertex>\nvY = (modelMatrix * vec4(transformed, 1.0)).y; vN = normalize(normalMatrix * objectNormal); vV = normalize(-mvPosition.xyz);")
+      .replace("#include <project_vertex>", "#include <project_vertex>\nvY = (modelMatrix * vec4(transformed, 1.0)).y; vN = normalize(normalMatrix * normal); vV = normalize(-mvPosition.xyz);")
     s.fragmentShader = s.fragmentShader.replace("#include <common>", "#include <common>\nuniform float uT; uniform vec3 uC; varying float vY; varying vec3 vN; varying vec3 vV;")
       .replace("#include <dithering_fragment>", `
         float wire = clamp((0.62 - dot(diffuseColor.rgb, vec3(0.333))) * 3.0, 0.0, 1.0);
@@ -34,7 +34,7 @@ function holoMaterial(map: THREE.Texture | null) {
 
 function Body({ zones, selected, onSelect }: { zones: Zone[]; selected?: string; onSelect: (id: string) => void }) {
   const { scene } = useGLTF(MODEL_URL)
-  const model = useMemo(() => scene.clone(true), [scene])
+  const model = useMemo(() => { const g = new THREE.Group(); g.add(scene.clone(true)); return g }, [scene])
   const mats = useRef<THREE.Material[]>([])
   const [pts, setPts] = useState<Record<string, THREE.Vector3>>({})
   const halos = useRef<Record<string, THREE.Mesh | null>>({})
@@ -47,10 +47,14 @@ function Body({ zones, selected, onSelect }: { zones: Zone[]; selected?: string;
       const mat = holoMaterial((m.material as THREE.MeshStandardMaterial).map ?? null)
       m.material = mat; mats.current.push(mat); m.frustumCulled = false
     })
-    model.rotation.set(-Math.PI / 2, 0, 0) // the source model is Z-up
-    model.scale.setScalar(1); model.position.set(0, 0, 0); model.updateMatrixWorld(true)
-    const box = new THREE.Box3().setFromObject(model), size = box.getSize(new THREE.Vector3()), k = H / size.y
-    model.scale.setScalar(k); model.updateMatrixWorld(true)
+    // normalise on a wrapper so the file's own node transforms are kept: stand it up, 1.75 m tall, feet on the floor
+    model.updateMatrixWorld(true)
+    let s = new THREE.Box3().setFromObject(model).getSize(new THREE.Vector3())
+    if (s.z > s.y * 1.5) model.rotation.x = -Math.PI / 2
+    else if (s.x > s.y * 1.5) model.rotation.z = Math.PI / 2
+    model.updateMatrixWorld(true)
+    s = new THREE.Box3().setFromObject(model).getSize(new THREE.Vector3())
+    model.scale.setScalar(H / s.y); model.updateMatrixWorld(true)
     const b2 = new THREE.Box3().setFromObject(model)
     model.position.set(-(b2.min.x + b2.max.x) / 2, -b2.min.y, -(b2.min.z + b2.max.z) / 2); model.updateMatrixWorld(true)
     const ray = new THREE.Raycaster(), out: Record<string, THREE.Vector3> = {}
@@ -102,9 +106,9 @@ function Base() {
 export default function Hologram({ zones, selected, onSelect, className }: { zones: Zone[]; selected?: string; onSelect: (id: string) => void; className?: string }) {
   return (
     <div className={className}>
-      <Canvas dpr={[1, 1.75]} camera={{ position: [0, 1.0, 3.7], fov: 30 }} gl={{ alpha: true, antialias: true }}>
+      <Canvas dpr={[1, 1.75]} camera={{ position: [0, 0.95, 4.3], fov: 30 }} gl={{ alpha: true, antialias: true }}>
         <Suspense fallback={null}><Body zones={zones} selected={selected} onSelect={onSelect} /><Base /></Suspense>
-        <OrbitControls target={[0, 0.88, 0]} enablePan={false} enableZoom={false} minPolarAngle={1.15} maxPolarAngle={1.7} rotateSpeed={0.5} autoRotate autoRotateSpeed={0.4} />
+        <OrbitControls target={[0, 0.86, 0]} enablePan={false} enableZoom={false} minPolarAngle={1.15} maxPolarAngle={1.7} rotateSpeed={0.5} autoRotate autoRotateSpeed={0.4} />
       </Canvas>
     </div>
   )

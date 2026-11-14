@@ -19,7 +19,7 @@ const NAV = [
 const SEEN = "sakti-welcomed"
 
 function Logo() {
-  return <span className="grid grid-cols-3 gap-[2px]" aria-hidden>{[1, .45, 1, .45, 1, .45, 1, .45, 1].map((o, i) => <span key={i} className="size-[4px] rounded-[1px] bg-slate2" style={{ opacity: o }} />)}</span>
+  return <span className="inline-grid shrink-0 grid-cols-3 gap-[2px]" aria-hidden>{[1, .45, 1, .45, 1, .45, 1, .45, 1].map((o, i) => <span key={i} className="size-[4px] rounded-[1px] bg-slate2" style={{ opacity: o }} />)}</span>
 }
 
 function Welcome({ onClose }: { onClose: () => void }) {

@@ -1,28 +1,21 @@
-// Crew record: a local JSON file through astra-console when native, browser storage otherwise. Always offline.
+// Crew record: a JSON file in the app-data folder (desktop app) or browser storage (web build).
 import { useSyncExternalStore } from "react"
-import { engineMode } from "./engine"
+import { isApp, recordsGet, recordsPut } from "./engine"
 import type { Records } from "./types"
 
-const KEY = "astra-records-v1"
+const KEY = "sakti-records-v1"
 const EMPTY: Records = { checkins: [], recordings: [], gravity: [] }
 let state: Records = (() => { try { return { ...EMPTY, ...JSON.parse(localStorage.getItem(KEY) ?? "{}") } } catch { return EMPTY } })()
 const subs = new Set<() => void>()
 let timer: number | undefined
 
-engineMode().then(async (m) => {
-  if (m !== "native") return
-  const r = await fetch("/api/records").then((x) => x.json()).catch(() => ({}))
-  if (r && Array.isArray(r.checkins)) { state = { ...EMPTY, ...r }; subs.forEach((f) => f()) }
-})
+if (isApp) recordsGet().then((t) => { const r = JSON.parse(t); if (Array.isArray(r.checkins)) { state = { ...EMPTY, ...r }; subs.forEach((f) => f()) } }).catch(() => undefined)
 
 export function update(fn: (r: Records) => Records) {
   state = fn(state)
   subs.forEach((f) => f())
   localStorage.setItem(KEY, JSON.stringify(state))
-  clearTimeout(timer)
-  timer = window.setTimeout(async () => {
-    if ((await engineMode()) === "native") fetch("/api/records", { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify(state) })
-  }, 300)
+  if (isApp) { clearTimeout(timer); timer = window.setTimeout(() => recordsPut(JSON.stringify(state)).catch(() => undefined), 300) }
 }
 
 export function useRecords() {
