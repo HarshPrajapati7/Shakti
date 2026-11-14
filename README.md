@@ -44,9 +44,6 @@ apps/web/              React + Vite + Tailwind + shadcn/ui + react-three-fiber d
 ## Evaluation protocol
 Leave-one-subject-out for PPG-DaLiA and WESAD. Leave-one-maneuver-out, with a hierarchical prior from *other* subjects, for GRAVITY-HEART personalisation. Simple baselines are reported next to every model, alongside 13 edge-case tests and a TypeScript/Python numerical equivalence test.
 
-## Limitations
-- GRAVITY-HEART was fitted on ground subjects at 1 g. Moon, Mars and post-flight results are simulations that extrapolate the fitted physics.
-- PPG-DaLiA and WESAD are terrestrial cohorts.
 - The console's mission telemetry is simulated and labelled as such. ASTRA-HEALTH is decision support, not a medical device.
 
 ## Credits
