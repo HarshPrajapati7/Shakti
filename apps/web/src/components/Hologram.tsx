@@ -13,20 +13,28 @@ const ANCHOR: Record<string, [number, number]> = {
   metabolic: [0.6, 0], muscle: [0.3, 0.1], radiation: [0.81, -0.17],
 }
 const BLUE = new THREE.Color("#8ea0c4")
+// size of the glowing region per body system (m)
+const RADIUS: Record<string, number> = { brain: 0.13, eyes: 0.07, mind: 0.09, heart: 0.13, lungs: 0.17, metabolic: 0.17, muscle: 0.32, radiation: 0.2 }
 
 function holoMaterial(map: THREE.Texture | null) {
   const m = new THREE.MeshBasicMaterial({ map, transparent: true, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending })
   m.onBeforeCompile = (s) => {
-    s.uniforms.uT = { value: 0 }; s.uniforms.uC = { value: BLUE }; m.userData.s = s
-    s.vertexShader = s.vertexShader.replace("#include <common>", "#include <common>\nvarying float vY; varying vec3 vN; varying vec3 vV;")
-      .replace("#include <project_vertex>", "#include <project_vertex>\nvY = (modelMatrix * vec4(transformed, 1.0)).y; vN = normalize(normalMatrix * normal); vV = normalize(-mvPosition.xyz);")
-    s.fragmentShader = s.fragmentShader.replace("#include <common>", "#include <common>\nuniform float uT; uniform vec3 uC; varying float vY; varying vec3 vN; varying vec3 vV;")
+    s.uniforms.uT = { value: 0 }; s.uniforms.uC = { value: BLUE }; s.uniforms.uN = { value: 0 }
+    s.uniforms.uP = { value: Array.from({ length: 8 }, () => new THREE.Vector4()) }; s.uniforms.uK = { value: Array.from({ length: 8 }, () => new THREE.Color()) }
+    m.userData.s = s
+    s.vertexShader = s.vertexShader.replace("#include <common>", "#include <common>\nvarying float vY; varying vec3 vN; varying vec3 vV; varying vec3 vW;")
+      .replace("#include <project_vertex>", "#include <project_vertex>\nvW = (modelMatrix * vec4(transformed, 1.0)).xyz; vY = vW.y; vN = normalize(normalMatrix * normal); vV = normalize(-mvPosition.xyz);")
+    s.fragmentShader = s.fragmentShader.replace("#include <common>", "#include <common>\nuniform float uT; uniform vec3 uC; uniform int uN; uniform vec4 uP[8]; uniform vec3 uK[8]; varying float vY; varying vec3 vN; varying vec3 vV; varying vec3 vW;")
       .replace("#include <dithering_fragment>", `
         float wire = clamp((0.62 - dot(diffuseColor.rgb, vec3(0.333))) * 3.0, 0.0, 1.0);
         float fr = pow(1.0 - abs(dot(normalize(vN), normalize(vV))), 2.0);
         float sweep = smoothstep(0.04, 0.0, abs(fract(vY * 0.28 - uT * 0.08) - 0.5));
         float a = clamp(0.03 + wire * 0.75 + fr * 0.55 + sweep * 0.35, 0.0, 1.0);
-        gl_FragColor = vec4(uC * (0.15 + wire * 1.1 + fr * 0.9 + sweep * 0.8), a);
+        vec3 col = uC * (0.15 + wire * 1.1 + fr * 0.9 + sweep * 0.8);
+        for (int i = 0; i < 8; i++) { if (i >= uN) break;
+          float d = distance(vW, uP[i].xyz), w = smoothstep(uP[i].w, uP[i].w * 0.35, d) * (0.75 + 0.25 * sin(uT * 3.0));
+          col = mix(col, uK[i] * (0.6 + wire * 1.6 + fr), w); a = max(a, w * (0.35 + wire * 0.6)); }
+        gl_FragColor = vec4(col, a);
         #include <dithering_fragment>`)
   }
   return m
@@ -48,6 +56,7 @@ function Body({ zones, selected, onSelect }: { zones: Zone[]; selected?: string;
       m.material = mat; mats.current.push(mat); m.frustumCulled = false
     })
     // normalise on a wrapper so the file's own node transforms are kept: stand it up, 1.75 m tall, feet on the floor
+    model.rotation.set(0, 0, 0); model.scale.setScalar(1); model.position.set(0, 0, 0) // idempotent on re-mount
     model.updateMatrixWorld(true)
     let s = new THREE.Box3().setFromObject(model).getSize(new THREE.Vector3())
     if (s.z > s.y * 1.5) model.rotation.x = -Math.PI / 2
@@ -68,7 +77,12 @@ function Body({ zones, selected, onSelect }: { zones: Zone[]; selected?: string;
 
   useFrame(({ clock }) => {
     const t = clock.elapsedTime
-    for (const m of mats.current) if (m.userData.s) m.userData.s.uniforms.uT.value = t
+    const bad = zones.filter((z) => z.status !== "ok" && pts[z.id]).slice(0, 8)
+    for (const m of mats.current) {
+      const u = m.userData.s?.uniforms; if (!u) continue
+      u.uT.value = t; u.uN.value = bad.length
+      bad.forEach((z, i) => { const p = pts[z.id]; u.uP.value[i].set(p.x, p.y, p.z - 0.06, RADIUS[z.id] ?? 0.14); u.uK.value[i].set(COLOR[z.status]) })
+    }
     for (const z of zones) halos.current[z.id]?.scale.setScalar(1 + 0.4 * Math.abs(Math.sin(t * (z.status === "alert" ? 3.5 : 1.4))))
   })
 
@@ -106,7 +120,7 @@ function Base() {
 export default function Hologram({ zones, selected, onSelect, className }: { zones: Zone[]; selected?: string; onSelect: (id: string) => void; className?: string }) {
   return (
     <div className={className}>
-      <Canvas dpr={[1, 1.75]} camera={{ position: [0, 0.95, 4.3], fov: 30 }} gl={{ alpha: true, antialias: true }}>
+      <Canvas dpr={[1, 1.75]} camera={{ position: [0, 0.9, 5.4], fov: 30 }} gl={{ alpha: true, antialias: true }}>
         <Suspense fallback={null}><Body zones={zones} selected={selected} onSelect={onSelect} /><Base /></Suspense>
         <OrbitControls target={[0, 0.86, 0]} enablePan={false} enableZoom={false} minPolarAngle={1.15} maxPolarAngle={1.7} rotateSpeed={0.5} autoRotate autoRotateSpeed={0.4} />
       </Canvas>
