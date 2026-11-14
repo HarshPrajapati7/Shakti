@@ -1,109 +1,97 @@
-import { useMemo, useState } from "react"
-import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
-import { Badge, Slider } from "@/components/ui"
-import { G_RATIO, OH_INITIAL, OH_SUSTAINED, runStand, type Env } from "@/lib/gravity"
-import { useGravity } from "@/lib/twin"
-import { STATUS_COLOR } from "@/lib/utils"
+import { useEffect, useState } from "react"
+import { Chart } from "@/components/Chart"
+import { Button, Field, Num, StatusPill, Tile, Toggle } from "@/components/ui"
+import { gravity } from "@/lib/engine"
+import { update, useRecords } from "@/lib/store"
+import type { GravityIn, GravityOut, StandTest } from "@/lib/types"
+import { COLOR, uid } from "@/lib/utils"
 
-const ENVS: [Env, string][] = [["moon", "Moon"], ["mars", "Mars"], ["earth", "Earth"]]
+const DEF: GravityIn = { sex: "F", age: 38, height_cm: 168, weight_kg: 62, hr_rest: 64, sbp: 116, dbp: 74, days_in_flight: 180, flight_gravity: 0,
+  target_gravity: 1, fluid_loading: false, compression: false }
+const DEST: [string, number][] = [["Earth", 1], ["Mars", 3.721 / 9.80665], ["Moon", 1.625 / 9.80665]]
+const ST_FIELDS: [keyof StandTest, string][] = [["hr_supine", "HR lying"], ["sbp_supine", "SBP lying"], ["dbp_supine", "DBP lying"], ["hr_1min", "HR at 1 min"],
+  ["sbp_1min", "SBP at 1 min"], ["dbp_1min", "DBP at 1 min"], ["hr_3min", "HR at 3 min"], ["sbp_3min", "SBP at 3 min"], ["dbp_3min", "DBP at 3 min"]]
 
 export default function Gravity() {
-  const g = useGravity()
-  const [ti, setTi] = useState(0)
-  const [gr, setGr] = useState(1)
-  const [pv, setPv] = useState(12)
-  const [fluid, setFluid] = useState(false)
-  const [compress, setCompress] = useState(false)
-  const t = g?.twins[ti]
+  const r = useRecords()
+  const [x, setX] = useState<GravityIn>({ ...DEF, ...r.profile })
+  const [st, setSt] = useState<Partial<StandTest>>(r.profile?.stand_test ?? {})
+  const [out, setOut] = useState<GravityOut>()
+  const [err, setErr] = useState<string>()
+  const stComplete = ST_FIELDS.every(([k]) => typeof st[k] === "number")
+  const set = <K extends keyof GravityIn>(k: K, v: GravityIn[K] | undefined) => v !== undefined && setX({ ...x, [k]: v })
 
-  const res = useMemo(() => {
-    if (!t) return undefined
-    const dv = Math.max(0, (pv / 100) * t.plasma_volume_ml - (fluid ? 250 : 0))
-    const run = (x: number, d: number, c: number) => runStand(t.theta, t.hr0, t.map0, t.height_cm, x, d, c)
-    const cur = run(gr, dv, compress ? 0.6 : 1), pre = run(gr, 0, 1)
-    const data = cur.sim.map.map((m, i) => ({ t: i - 60, map: m, pre: pre.sim.map[i], hr: cur.sim.hr[i] })).filter((_, i) => i >= 20)
-    return { cur: cur.summary, data, envs: ENVS.map(([e, n]) => [n, run(G_RATIO[e], dv, compress ? 0.6 : 1).summary.margin] as const) }
-  }, [t, gr, pv, fluid, compress])
+  useEffect(() => {
+    const t = setTimeout(() => {
+      gravity({ ...x, stand_test: stComplete ? (st as StandTest) : undefined }).then((o) => { setOut(o); setErr(undefined) }).catch((e) => setErr(e.message))
+    }, 200)
+    return () => clearTimeout(t)
+  }, [x, st, stComplete])
 
-  if (!g || !t || !res) return <div className="label p-10">Loading twin…</div>
-  const st = res.cur.margin < 0 ? "alert" : res.cur.margin < 4 ? "watch" : "ok"
-  const gName = ENVS.find(([e]) => Math.abs(G_RATIO[e] - gr) < 1e-3)?.[1] ?? `${gr.toFixed(2)} g`
+  const dest = DEST.find(([, g]) => Math.abs(g - x.target_gravity) < 1e-3)?.[0] ?? "destination"
+  const save = () => out && update((s) => ({ ...s, profile: { ...x, stand_test: stComplete ? (st as StandTest) : undefined },
+    gravity: [...s.gravity, { id: uid(), date: new Date().toISOString(), input: x, margin: out.summary.margin_mmhg, status: out.status, destination: dest }] }))
 
   return (
-    <div className="grid gap-px bg-line lg:grid-cols-[340px_1fr]">
-      <section className="space-y-7 bg-void p-6">
-        <div>
-          <p className="label">GRAVITY-HEART · personal circulation twin</p>
-          <p className="mt-3 text-sm leading-relaxed text-ink/80">
-            Fitted to one volunteer's tilt-table and stand tests (PhysioNet PRCP). It predicts that person's blood pressure when standing up after the deconditioning you choose.
-          </p>
+    <div className="grid flex-1 gap-3 lg:grid-cols-12">
+      <Tile className="lg:col-span-4" title="Your details">
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Sex"><select value={x.sex} onChange={(e) => set("sex", e.target.value)}><option value="F">Female</option><option value="M">Male</option></select></Field>
+          <Field label="Age" unit="y"><Num value={x.age} min={18} max={80} onChange={(v) => set("age", v)} /></Field>
+          <Field label="Height" unit="cm"><Num value={x.height_cm} min={120} max={220} onChange={(v) => set("height_cm", v)} /></Field>
+          <Field label="Weight" unit="kg"><Num value={x.weight_kg} min={30} max={200} onChange={(v) => set("weight_kg", v)} /></Field>
+          <Field label="Resting HR" unit="bpm"><Num value={x.hr_rest} min={30} max={140} onChange={(v) => set("hr_rest", v)} /></Field>
+          <Field label="Blood pressure" unit="mmHg"><div className="flex items-center gap-1"><Num value={x.sbp} min={70} max={220} onChange={(v) => set("sbp", v)} /><span className="text-mute">/</span><Num value={x.dbp} min={40} max={140} onChange={(v) => set("dbp", v)} /></div></Field>
         </div>
-        <label className="grid gap-2"><span className="label">Twin</span>
-          <select value={ti} onChange={(e) => setTi(+e.target.value)} className="border border-line bg-panel px-2 py-2 text-sm">
-            {g.twins.map((x, i) => <option key={x.id} value={i}>{x.label} · {x.sex}, {x.age} y, {x.height_cm} cm</option>)}
-          </select>
-        </label>
-        <div className="grid gap-2">
-          <span className="label">Gravity</span>
-          <div className="grid grid-cols-3 border border-line">
-            {ENVS.map(([e, n]) => (
-              <button key={e} onClick={() => setGr(G_RATIO[e])} aria-pressed={gName === n}
-                className={`py-2 text-sm transition-colors ${gName === n ? "bg-ink text-void" : "text-mute hover:text-ink"}`}>{n}</button>
-            ))}
-          </div>
-          <Slider label="Custom" valueText={`${gr.toFixed(2)} g`} min={0} max={1} step={0.01} value={[gr]} onValueChange={([v]) => setGr(v)} />
+        <h3 className="mb-3 mt-6 text-[13px] font-semibold">Mission</h3>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Days in flight"><Num value={x.days_in_flight} min={0} max={1500} onChange={(v) => set("days_in_flight", v)} /></Field>
+          <Field label="Gravity during flight"><select value={x.flight_gravity} onChange={(e) => set("flight_gravity", +e.target.value)}>
+            <option value={0}>Weightless</option><option value={1.625 / 9.80665}>Moon base</option><option value={3.721 / 9.80665}>Mars base</option></select></Field>
         </div>
-        <Slider label="Plasma volume lost in flight" valueText={`${pv}% · ${Math.round((pv / 100) * t.plasma_volume_ml)} mL`}
-          min={0} max={20} step={1} value={[pv]} onValueChange={([v]) => setPv(v)} />
-        <fieldset className="grid gap-3"><legend className="label mb-2">Countermeasures</legend>
-          {[["Fluid loading (≈250 mL saline)", fluid, setFluid], ["Lower-body compression garment", compress, setCompress]].map(([l, v, set]) => (
-            <label key={l as string} className="flex items-center gap-3 text-sm">
-              <input type="checkbox" checked={v as boolean} onChange={(e) => (set as (b: boolean) => void)(e.target.checked)} className="accent-[#5cc8ff]" /> {l as string}
-            </label>
-          ))}
-        </fieldset>
-      </section>
+        <Field label="Arriving at"><div className="mt-0.5 grid grid-cols-3 rounded-[4px] border border-edge">
+          {DEST.map(([n, g]) => <button key={n} onClick={() => set("target_gravity", g)} aria-pressed={dest === n}
+            className={`py-2 text-[13px] ${dest === n ? "bg-cream text-[#1c1d20]" : "text-mute hover:text-ink"}`}>{n}</button>)}</div></Field>
+        <h3 className="mb-1 mt-6 text-[13px] font-semibold">Countermeasures</h3>
+        <Toggle label="Fluid loading before arrival" checked={x.fluid_loading} onChange={(b) => set("fluid_loading", b)} />
+        <Toggle label="Compression garment" checked={x.compression} onChange={(b) => set("compression", b)} />
+        <details className="mt-5 border-t border-edge pt-4">
+          <summary className="cursor-pointer text-[13px] font-semibold">Personalise with a stand test {stComplete && <span className="ml-2 text-ok">· active</span>}</summary>
+          <p className="my-3 text-[12px] text-mute">Lie down 5 minutes, measure, then stand and measure at 1 and 3 minutes. The engine fits your own pooling and reflex strength.</p>
+          <div className="grid grid-cols-3 gap-2">{ST_FIELDS.map(([k, l]) => <Field key={k} label={l}><Num value={st[k]} onChange={(v) => setSt({ ...st, [k]: v })} /></Field>)}</div>
+          {Object.keys(st).length > 0 && <Button tone="ghost" className="mt-2 px-0" onClick={() => setSt({})}>Clear stand test</Button>}
+        </details>
+      </Tile>
 
-      <section className="bg-void p-6">
-        <div className="flex flex-wrap items-end gap-x-12 gap-y-4">
-          <div>
-            <Badge color={STATUS_COLOR[st]}>{st === "alert" ? "Orthostatic hypotension predicted" : st === "watch" ? "Low margin" : "Tolerated"}</Badge>
-            <p className="num mt-2 text-5xl" style={{ color: STATUS_COLOR[st] }}>{res.cur.margin >= 0 ? "+" : ""}{res.cur.margin.toFixed(1)}<span className="ml-2 text-base text-mute">mmHg margin</span></p>
+      <Tile className="lg:col-span-8" title={`Standing up on ${dest}`} action={out && <Button tone="light" className="h-8" onClick={save}>Save to record</Button>}>
+        {err && <p className="mb-3 text-[13px] text-alert">{err}</p>}
+        {out && <>
+          <div className="flex flex-wrap items-end gap-x-10 gap-y-4">
+            <div><StatusPill s={out.status} label={out.status === "alert" ? "Fainting risk predicted" : out.status === "watch" ? "Low margin" : "Tolerated"} />
+              <p className="dot num mt-2 text-6xl" style={{ color: COLOR[out.status] }}>{out.summary.margin_mmhg >= 0 ? "+" : ""}{out.summary.margin_mmhg.toFixed(1)}</p>
+              <p className="text-[12px] text-mute">mmHg margin to orthostatic hypotension</p></div>
+            <dl className="grid grid-cols-3 gap-6 text-[13px]">
+              <div><dt className="text-[11px] text-mute">Initial BP drop</dt><dd className="num mt-1">{out.summary.dmap_initial.toFixed(0)} mmHg</dd></div>
+              <div><dt className="text-[11px] text-mute">Heart-rate rise</dt><dd className="num mt-1">+{out.summary.dhr_sustained.toFixed(0)} bpm</dd></div>
+              <div><dt className="text-[11px] text-mute">Plasma lost</dt><dd className="num mt-1">{out.plasma_loss_ml.toFixed(0)} mL</dd></div>
+            </dl>
           </div>
-          <dl className="grid grid-cols-3 gap-8 text-sm">
-            <div><dt className="label">Initial drop</dt><dd className="num mt-1">{res.cur.dmapInitial.toFixed(1)} mmHg</dd></div>
-            <div><dt className="label">HR rise</dt><dd className="num mt-1">+{res.cur.dhrSustained.toFixed(0)} bpm</dd></div>
-            <div><dt className="label">Blood in legs</dt><dd className="num mt-1">{res.cur.vpool.toFixed(0)} mL</dd></div>
-          </dl>
-        </div>
-        <div className="mt-8 h-80">
-          <ResponsiveContainer>
-            <LineChart data={res.data} margin={{ left: -8, right: 12, top: 8, bottom: 18 }}>
-              <CartesianGrid stroke="#1a2230" vertical={false} />
-              <XAxis dataKey="t" type="number" domain={["dataMin", "dataMax"]} stroke="#8792a2" fontSize={11} tickLine={false}
-                label={{ value: "seconds from standing up", position: "insideBottom", offset: -14, fill: "#8792a2", fontSize: 11 }} />
-              <YAxis stroke="#8792a2" fontSize={11} tickLine={false} domain={["auto", "auto"]} />
-              <ReferenceLine x={0} stroke="#8792a2" strokeDasharray="2 4" />
-              <ReferenceLine y={t.map0 - OH_SUSTAINED} stroke="#ff4a3d" strokeDasharray="4 4" label={{ value: "sustained OH limit", fill: "#ff4a3d", fontSize: 10, position: "insideBottomRight" }} />
-              <ReferenceLine y={t.map0 - OH_INITIAL} stroke="#ff4a3d" strokeOpacity={0.5} strokeDasharray="1 4" />
-              <Tooltip contentStyle={{ background: "#0a0e15", border: "1px solid #1a2230", fontSize: 12 }} formatter={(v: number) => v.toFixed(1)} labelFormatter={(x) => `${x} s`} />
-              <Line dataKey="pre" name="Pre-flight MAP" stroke="#8792a2" dot={false} strokeWidth={1} isAnimationActive={false} />
-              <Line dataKey="map" name="Now MAP" stroke="#5cc8ff" dot={false} strokeWidth={2} isAnimationActive={false} />
-              <Line dataKey="hr" name="Heart rate" stroke="#ffb340" dot={false} strokeWidth={1} strokeDasharray="3 3" isAnimationActive={false} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-        <div className="mt-6 grid grid-cols-3 gap-px bg-line">
-          {res.envs.map(([n, m]) => {
-            const c = STATUS_COLOR[m < 0 ? "alert" : m < 4 ? "watch" : "ok"]
-            return <div key={n} className="bg-void p-4"><p className="label">{n}</p><p className="num mt-1 text-xl" style={{ color: c }}>{m >= 0 ? "+" : ""}{m.toFixed(1)} mmHg</p></div>
-          })}
-        </div>
-        <p className="mt-4 text-xs leading-relaxed text-mute">
-          Blue: mean arterial pressure at heart level. Grey: same person before flight. Amber: heart rate. Red lines: consensus orthostatic-hypotension limits (MAP-equivalent).
-          The twin was fitted at 1 g; lower gravities are physics-based extrapolations and have not been validated in flight.
-        </p>
-      </section>
+          <div className="mt-5">
+            <Chart x={out.t} unit="" xLabel="seconds from standing up"
+              lines={[{ y: out.map_preflight, color: "#8d8f96", label: "Before flight", width: 1 }, { y: out.map, color: "#8ea0c4", label: "After flight", width: 2 }]}
+              refs={[{ y: out.map0 - 13.3, label: "orthostatic limit", color: "#e0503a" }]} />
+          </div>
+          <div className="mt-4 grid grid-cols-3 gap-2">{out.by_destination.map(([n, , m]) => {
+            const s = m < 0 ? "alert" : m < 4 ? "watch" : "ok"
+            return <div key={n} className="rounded-[4px] bg-tile2 p-3"><p className="text-[11px] text-mute">{n}</p><p className="dot num mt-1 text-2xl" style={{ color: COLOR[s] }}>{m >= 0 ? "+" : ""}{m.toFixed(0)}</p></div>
+          })}</div>
+          <ul className="mt-5 grid gap-2">{out.advice.map((a) => <li key={a} className="rounded-[4px] bg-tile2 px-3 py-2.5 text-[13px] leading-relaxed">{a}</li>)}</ul>
+          <p className="mt-4 text-[11px] leading-relaxed text-mute">
+            {out.personalised ? `Personalised from your stand test (fit error ${out.calibration_rmse?.toFixed(1)}): venous pooling ×${out.pooling_factor.toFixed(2)}, reflex ×${out.reflex_factor.toFixed(2)} of average. ` : "Population model scaled to your height, resting HR and BP. Add a stand test to personalise. "}
+            Fitted on 1 g tilt-table data. Moon and Mars are physics-based extrapolations.
+          </p>
+        </>}
+      </Tile>
     </div>
   )
 }

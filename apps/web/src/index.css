@@ -1,45 +1,38 @@
 @import "tailwindcss";
-@import "@fontsource-variable/archivo/wdth.css";
-@import "@fontsource/ibm-plex-mono/400.css";
-@import "@fontsource/ibm-plex-mono/500.css";
+@import "@fontsource/doto/500.css";
+@import "@fontsource/doto/700.css";
+@import "@fontsource-variable/manrope";
 
-/* One system: near-black canvas, white type, a single hologram blue, status colours used only for status. */
 @theme {
-  --font-sans: "Archivo Variable", system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
-  --color-void: #04060a;
-  --color-panel: #0a0e15;
-  --color-line: #1a2230;
-  --color-ink: #e9edf2;
-  --color-mute: #8792a2;
-  --color-holo: #5cc8ff;
-  --color-ok: #3fd49a;
-  --color-watch: #ffb340;
-  --color-alert: #ff4a3d;
-  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --font-sans: "Manrope Variable", system-ui, sans-serif;
+  --font-dot: "Doto", ui-monospace, monospace;
+  --color-frame: #17181b;
+  --color-tile: #1f2024;
+  --color-tile2: #26272c;
+  --color-edge: #2f3136;
+  --color-ink: #e7e6e1;
+  --color-mute: #8d8f96;
+  --color-slate: #5d7096;
+  --color-slate2: #8ea0c4;
+  --color-cream: #e8e6dc;
+  --color-ok: #6fc49a;
+  --color-watch: #e2ad4c;
+  --color-alert: #e0503a;
 }
 
-/* shadcn/ui tokens mapped onto the same palette */
-:root {
-  --background: var(--color-void);
-  --foreground: var(--color-ink);
-  --card: var(--color-panel);
-  --card-foreground: var(--color-ink);
-  --primary: var(--color-ink);
-  --primary-foreground: var(--color-void);
-  --muted-foreground: var(--color-mute);
-  --border: var(--color-line);
-  --ring: var(--color-holo);
-  color-scheme: dark;
+html, body, #root { height: 100%; }
+html { background: var(--color-frame); color: var(--color-ink); -webkit-font-smoothing: antialiased; }
+body { font-family: var(--font-sans); font-size: 14px; }
+.dot { font-family: var(--font-dot); font-weight: 700; letter-spacing: 0.02em; line-height: 0.95; }
+.cap { font-size: 11px; letter-spacing: 0.06em; color: var(--color-mute); }
+.tile { background: var(--color-tile); border: 1px solid var(--color-edge); border-radius: 6px; }
+.num { font-variant-numeric: tabular-nums; }
+:focus-visible { outline: 2px solid var(--color-slate2); outline-offset: 2px; }
+input[type="number"], input[type="text"], select {
+  background: var(--color-tile2); border: 1px solid var(--color-edge); border-radius: 4px; padding: 8px 10px; color: var(--color-ink); width: 100%;
 }
-
-html { background: var(--color-void); color: var(--color-ink); -webkit-font-smoothing: antialiased; }
-body { font-family: var(--font-sans); font-variation-settings: "wdth" 100; }
-.display { font-stretch: 75%; font-variation-settings: "wdth" 75; letter-spacing: -0.01em; text-transform: uppercase; line-height: 0.92; }
-.label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-mute); }
-.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
-:focus-visible { outline: 2px solid var(--color-holo); outline-offset: 2px; }
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
-}
+input:focus, select:focus { border-color: var(--color-slate2); outline: none; }
+input::-webkit-inner-spin-button { opacity: 0.4; }
+dialog { background: transparent; color: inherit; }
+dialog::backdrop { background: rgb(8 9 11 / 0.6); backdrop-filter: blur(3px); }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }

@@ -1,20 +1,13 @@
-import { StrictMode, lazy, Suspense } from "react"
+import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
-import { BrowserRouter, Route, Routes } from "react-router-dom"
+import { BrowserRouter } from "react-router-dom"
 import "./index.css"
-import Landing from "./pages/Landing"
-
-const Console = lazy(() => import("./pages/Console"))
+import App from "./App"
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-      <Suspense fallback={<div className="grid h-dvh place-items-center label">Loading console…</div>}>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/console/*" element={<Console />} />
-        </Routes>
-      </Suspense>
+      <App />
     </BrowserRouter>
   </StrictMode>,
 )

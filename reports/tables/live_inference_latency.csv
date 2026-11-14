@@ -1,6 +1,6 @@
 ,value
-"PPG CNN forward, 1 CPU thread (ms/window)",7.919606000000003
-HMM belief update (ms/window),0.1269266999999985
+"PPG CNN forward, 1 CPU thread (ms/window)",9.252322
+HMM belief update (ms/window),0.14058759999999992
 window period (ms),2000.0
-real-time factor,248.5542623843435
+real-time factor,212.92656750364128
 parameters,234945.0

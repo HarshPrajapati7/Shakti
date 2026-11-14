@@ -1,0 +1,12 @@
+[package]
+name = "astra-wasm"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+astra-core = { path = "../astra-core" }
+wasm-bindgen = "=0.2.129"
+

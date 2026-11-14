@@ -2,7 +2,8 @@
  "mode": "full",
  "ppg_ver": "v2",
  "stages": {
-  "check": 7.2
+  "check": 7.9,
+  "prepare": 0.0
  },
- "finished": "2026-11-13 22:56:40"
+ "finished": "2026-11-13 23:32:07"
 }

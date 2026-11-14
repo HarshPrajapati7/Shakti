@@ -1,0 +1,104 @@
+{
+ "version": "v2",
+ "n_models": 3,
+ "cin": 6,
+ "k_context": 8,
+ "nb": 224,
+ "k0": 32,
+ "df_hz": 0.015625,
+ "fs_ppg": 64,
+ "fs_acc": 32,
+ "nfft_ppg": 4096,
+ "nfft_acc": 2048,
+ "trans_mu": 5.7224792898767923e-05,
+ "trans_sigma": 0.02578159016599666,
+ "eps": 0.001,
+ "conformal_q": 3.5753231253330524,
+ "layers": [
+  {
+   "name": "stem0",
+   "shape": [
+    32,
+    6,
+    3,
+    9
+   ],
+   "dilation": 1
+  },
+  {
+   "name": "stem1",
+   "shape": [
+    32,
+    32,
+    3,
+    9
+   ],
+   "dilation": 1
+  },
+  {
+   "name": "tc",
+   "shape": [
+    64,
+    32,
+    8,
+    1
+   ],
+   "dilation": 1
+  },
+  {
+   "name": "res0",
+   "shape": [
+    64,
+    64,
+    9
+   ],
+   "dilation": 1
+  },
+  {
+   "name": "res1",
+   "shape": [
+    64,
+    64,
+    9
+   ],
+   "dilation": 2
+  },
+  {
+   "name": "res2",
+   "shape": [
+    64,
+    64,
+    9
+   ],
+   "dilation": 4
+  },
+  {
+   "name": "res3",
+   "shape": [
+    64,
+    64,
+    9
+   ],
+   "dilation": 8
+  },
+  {
+   "name": "res4",
+   "shape": [
+    64,
+    64,
+    9
+   ],
+   "dilation": 16
+  },
+  {
+   "name": "head",
+   "shape": [
+    1,
+    64,
+    1
+   ],
+   "dilation": 1
+  }
+ ],
+ "loso_online_mae": 4.459374612035883
+}

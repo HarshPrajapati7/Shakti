@@ -10,3 +10,5 @@ apps/web/node_modules/
 apps/web/dist/
 .ipynb_checkpoints/
 *.zip
+engine/target/
+engine/sakti-app/gen/

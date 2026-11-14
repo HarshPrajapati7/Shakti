@@ -1,0 +1,17 @@
+[package]
+name = "sakti-app"
+version.workspace = true
+edition.workspace = true
+description = "Sakti - astronaut health self-assessment (Team Star Busters)"
+
+[[bin]]
+name = "sakti"
+path = "src/main.rs"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+astra-core = { path = "../astra-core" }
+tauri = { version = "2", features = [] }
+serde_json = "1"
