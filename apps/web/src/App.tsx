@@ -1,6 +1,10 @@
 import { lazy, Suspense, useCallback, useState } from "react"
 import { NavLink, Route, Routes, useLocation } from "react-router-dom"
+<<<<<<< HEAD
 import { ClipboardPlus, History as HistoryIcon, LayoutGrid, Orbit, Trophy, Watch } from "lucide-react"
+=======
+import { ClipboardPlus, Flag, History as HistoryIcon, LayoutGrid, Orbit, Watch } from "lucide-react"
+>>>>>>> 0b9a1311cf4c747f2eb15b6ef3e299fee3fa382d
 import Loading from "@/components/Loading"
 import { Button } from "@/components/ui"
 import { loadSample } from "@/lib/sample"
@@ -16,9 +20,13 @@ const Mission = lazy(() => import("@/pages/Mission"))
 
 const NAV = [
   { to: "/", label: "Status", icon: LayoutGrid }, { to: "/check-in", label: "Check-in", icon: ClipboardPlus },
+<<<<<<< HEAD
   { to: "/gravity", label: "Gravity", icon: Orbit }, { to: "/wearable", label: "Wearable", icon: Watch },
   { to: "/gamification", label: "Gamification", icon: Trophy }, { to: "/history", label: "History", icon: HistoryIcon },
   { to: "/mission", label: "Mission", icon: Orbit },
+=======
+  { to: "/gravity", label: "Gravity", icon: Orbit }, { to: "/wearable", label: "Wearable", icon: Watch }, { to: "/mission", label: "Mission", icon: Flag }, { to: "/history", label: "History", icon: HistoryIcon },
+>>>>>>> 0b9a1311cf4c747f2eb15b6ef3e299fee3fa382d
 ]
 const SEEN = "sakti-welcomed"
 
@@ -78,7 +86,11 @@ export default function App() {
             <Route path="/check-in" element={<CheckIn />} />
             <Route path="/gravity" element={<Gravity />} />
             <Route path="/wearable" element={<Wearable />} />
+<<<<<<< HEAD
             <Route path="/gamification" element={<Gamification />} />
+=======
+            <Route path="/mission" element={<Mission />} />
+>>>>>>> 0b9a1311cf4c747f2eb15b6ef3e299fee3fa382d
             <Route path="/history" element={<History />} />
             <Route path="/mission" element={<Mission />} />
             <Route path="*" element={<Status />} />

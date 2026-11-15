@@ -19,6 +19,7 @@ export interface HrOut { n_windows: number; seconds: number; t_s: number[]; hr: 
 export interface CheckIn { id: string; date: string; vitals: Vitals; result: AssessOut }
 export interface Recording { id: string; date: string; name: string; seconds: number; mean_hr: number; min_hr: number; max_hr: number; reliable: number; status: Status }
 export interface GravityRun { id: string; date: string; input: GravityIn; margin: number; status: Status; destination: string }
+<<<<<<< HEAD
 export interface GamificationState {
   xp: number
   level: number
@@ -32,3 +33,12 @@ export interface GamificationState {
 export interface MissionTask { id: string; title: string; route?: string; status: "available" | "completed" | "deferred"; completedAt?: string }
 export interface MissionState { status: "active" | "paused" | "archived"; startedAt: string; tasks: MissionTask[]; xp: number }
 export interface Records { checkins: CheckIn[]; recordings: Recording[]; gravity: GravityRun[]; profile?: Partial<GravityIn>; gamification?: GamificationState; mission?: MissionState }
+=======
+export type TaskStatus = "locked" | "available" | "completed" | "deferred" | "skipped"
+export type EvidenceSource = "manual" | "wearable" | "simulation" | "self_report"
+export interface MissionTask { taskId: string; status: TaskStatus; availableAt?: string; completedAt?: string; source?: EvidenceSource; recordId?: string; note?: string; xp: number }
+export interface MissionInstance { id: string; templateId: string; startedAt: string; endedAt?: string; status: "active" | "completed" | "abandoned"; tasks: MissionTask[] }
+export interface MissionEvent { id: string; date: string; type: "started" | "completed" | "deferred" | "skipped" | "resumed" | "badge" | "mission_completed" | "learning"; label: string; source: EvidenceSource | "system"; xp: number }
+export interface MissionState { active?: MissionInstance; archived: MissionInstance[]; events: MissionEvent[]; xp: number; badges: string[]; learned: string[] }
+export interface Records { checkins: CheckIn[]; recordings: Recording[]; gravity: GravityRun[]; profile?: Partial<GravityIn>; mission?: MissionState }
+>>>>>>> 0b9a1311cf4c747f2eb15b6ef3e299fee3fa382d
