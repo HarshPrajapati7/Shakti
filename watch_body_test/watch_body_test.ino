@@ -854,4 +854,11 @@ void loop() {
 
   // ── 3. Pulse Active Layer (Only in Body View when an alert region is active)
   // ─
-  if (currentView == VIEW_BODY_HOLOGRAM && curMode != MODE_BASE)
+  if (currentView == VIEW_BODY_HOLOGRAM && curMode != MODE_BASE) {
+    if (now - lastPulse > PULSE_MS) {
+      lastPulse = now;
+      pulseOn = !pulseOn;
+      drawModeLayer(pulseOn);
+    }
+  }
+}
