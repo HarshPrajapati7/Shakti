@@ -9,6 +9,7 @@ SAKTI learns each astronaut's own baseline, shows which body systems are changin
 
 - **Windows desktop application (one click):** download [`sakti.exe`](https://github.com/HarshPrajapati7/Shakti/releases/download/v1.0.0/sakti.exe) and run it. No installation or network is required.
 - **Video demonstration:** https://youtu.be/w6IXvcISsVY
+- **Research paper (PDF):** [read it here](https://github.com/HarshPrajapati7/Shakti/blob/main/SAKTI_Research_Paper.pdf) · [direct download](https://github.com/HarshPrajapati7/Shakti/raw/main/SAKTI_Research_Paper.pdf)
 - **Web build (any OS, Node 20+):**
   ```powershell
   cd apps\web; npm ci; npm run dev     # http://localhost:5173
