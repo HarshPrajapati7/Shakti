@@ -80,6 +80,15 @@ export default function Status() {
           : <p className="text-mute">Upload a wristband recording to measure heart rate under motion.</p>}
       </Tile>
 
+      <Tile className="lg:col-span-3" title="Mission Routine & XP" action={<Link to="/gamification" aria-label="Open gamification"><ArrowUpRight className="size-4 text-mute" /></Link>}>
+        <p className="dot num text-5xl text-[#e2ad4c]">{r.gamification?.streak ?? 7}<span className="ml-1 font-sans text-sm font-normal text-mute">day streak</span></p>
+        <p className="mt-2 text-[12px] text-mute">Routine: 15:00 Biomarkers · Level {r.gamification?.level ?? 2} Specialist</p>
+      </Tile>
+
+      <Tile className="lg:col-span-3" title="Mission Protocols" action={<Link to="/mission" aria-label="Open mission protocols"><ArrowUpRight className="size-4 text-mute" /></Link>}>
+        {r.mission ? <><p className="dot text-2xl">Suit-Up & EVA</p><p className="mt-2 text-[12px] text-mute">{r.mission.tasks.filter(t => t.status === "completed").length} of {r.mission.tasks.length} checkpoints · {r.mission.status}</p></> : <p className="text-mute">Start a guided health-maintenance mission.</p>}
+      </Tile>
+
       <Sheet open={!!sys} onClose={() => setOpen(undefined)} title={sys?.label ?? ""} side>
         {sys && <>
           <StatusPill s={sys.status} />

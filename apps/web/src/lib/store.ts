@@ -15,6 +15,11 @@ export function update(fn: (r: Records) => Records) {
   state = fn(state)
   subs.forEach((f) => f())
   localStorage.setItem(KEY, JSON.stringify(state))
+  fetch("http://localhost:3001/api/sync", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(state)
+  }).catch(() => undefined)
   if (isApp) { clearTimeout(timer); timer = window.setTimeout(() => recordsPut(JSON.stringify(state)).catch(() => undefined), 300) }
 }
 

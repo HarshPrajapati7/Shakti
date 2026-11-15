@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { engineReady, info } from "@/lib/engine"
 import { MODEL_URL } from "@/lib/utils"
 
-const MIN_MS = 2600 // let the clip play at least once through its opening
+const MIN_MS = 0
 
 async function fetchWithProgress(url: string, onBytes: (frac: number) => void) {
   const r = await fetch(url)
@@ -41,10 +41,7 @@ export default function Loading({ onDone }: { onDone: () => void }) {
     <div className={`fixed inset-0 z-50 flex flex-col bg-frame px-8 py-7 transition-opacity duration-500 md:px-14 md:py-10 ${leaving ? "opacity-0" : "opacity-100"}`}>
       <p className="dot text-2xl">Sakti</p>
       <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-[6vh]">
-        <div className="overflow-hidden rounded-[10px] border border-edge bg-tile" style={{ width: "min(56rem, 88vw, calc(56vh * 16 / 9))" }}>
-          <video className="aspect-video w-full object-cover" src={`${import.meta.env.BASE_URL}media/loading.mp4`} poster={`${import.meta.env.BASE_URL}media/loading.jpg`}
-            autoPlay muted loop playsInline aria-hidden />
-        </div>
+        <p className="dot text-4xl text-slate2">Sakti</p>
         <div style={{ width: "min(48rem, 80vw)" }} role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(p * 100)} aria-label="Loading">
           <p className="mb-3 text-center text-[15px] text-ink/90">Loading<span className="inline-block w-6 text-left">{".".repeat(1 + (Math.floor(p * 40) % 3))}</span></p>
           <div className="h-px w-full bg-edge"><div className="h-px bg-slate2 transition-[width] duration-150" style={{ width: `${p * 100}%` }} /></div>

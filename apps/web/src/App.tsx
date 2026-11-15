@@ -1,20 +1,24 @@
 import { lazy, Suspense, useCallback, useState } from "react"
 import { NavLink, Route, Routes, useLocation } from "react-router-dom"
-import { ClipboardPlus, History as HistoryIcon, LayoutGrid, Orbit, Watch } from "lucide-react"
+import { ClipboardPlus, History as HistoryIcon, LayoutGrid, Orbit, Trophy, Watch } from "lucide-react"
 import Loading from "@/components/Loading"
 import { Button } from "@/components/ui"
 import { loadSample } from "@/lib/sample"
 import { useRecords } from "@/lib/store"
 
 const Status = lazy(() => import("@/pages/Status"))
-const CheckIn = lazy(() => import("@/pages/CheckIn"))
+const CheckIn = lazy(() => import("@/pages/Checkin"))
 const Gravity = lazy(() => import("@/pages/Gravity"))
 const Wearable = lazy(() => import("@/pages/Wearable"))
+const Gamification = lazy(() => import("@/pages/Gamification"))
 const History = lazy(() => import("@/pages/History"))
+const Mission = lazy(() => import("@/pages/Mission"))
 
 const NAV = [
   { to: "/", label: "Status", icon: LayoutGrid }, { to: "/check-in", label: "Check-in", icon: ClipboardPlus },
-  { to: "/gravity", label: "Gravity", icon: Orbit }, { to: "/wearable", label: "Wearable", icon: Watch }, { to: "/history", label: "History", icon: HistoryIcon },
+  { to: "/gravity", label: "Gravity", icon: Orbit }, { to: "/wearable", label: "Wearable", icon: Watch },
+  { to: "/gamification", label: "Gamification", icon: Trophy }, { to: "/history", label: "History", icon: HistoryIcon },
+  { to: "/mission", label: "Mission", icon: Orbit },
 ]
 const SEEN = "sakti-welcomed"
 
@@ -54,11 +58,11 @@ export default function App() {
   if (!ready) return <Loading onDone={done} />
   return (
     <div className="mx-auto flex h-full max-w-[1600px] flex-col gap-3 p-3 md:flex-row">
-      <nav aria-label="Main" className="tile flex shrink-0 items-center gap-1 p-2 md:w-52 md:flex-col md:items-stretch md:p-3">
+      <nav aria-label="Main" className="tile flex shrink-0 gap-1 overflow-x-auto p-2 md:w-52 md:flex-col md:items-stretch md:overflow-visible md:p-3">
         <div className="hidden items-center gap-2.5 px-2 pb-6 pt-1 md:flex"><Logo /><span className="dot text-xl">Sakti</span></div>
         {NAV.map(({ to, label, icon: Icon }) => (
-          <NavLink key={to} to={to} end className={({ isActive }) => `flex flex-1 items-center justify-center gap-3 rounded-[4px] px-3 py-2.5 text-[13px] transition-colors md:flex-none md:justify-start ${isActive ? "bg-tile2 text-ink" : "text-mute hover:bg-tile2/50 hover:text-ink"}`}>
-            <Icon className="size-4" strokeWidth={1.6} /><span className="hidden sm:inline">{label}</span>
+          <NavLink key={to} to={to} end title={label} className={({ isActive }) => `flex min-w-fit flex-1 flex-col items-center justify-center gap-1 rounded-[4px] px-3 py-2 text-[11px] transition-colors md:flex-none md:flex-row md:justify-start md:gap-3 md:px-3 md:py-2.5 md:text-[13px] ${isActive ? "bg-tile2 text-ink" : "text-mute hover:bg-tile2/50 hover:text-ink"}`}>
+            <Icon className="size-4 shrink-0" strokeWidth={1.6} /><span>{label}</span>
           </NavLink>
         ))}
         <p className="mt-auto hidden px-2 pt-6 text-[11px] text-mute md:block">Made by Team Star Busters</p>
@@ -74,7 +78,9 @@ export default function App() {
             <Route path="/check-in" element={<CheckIn />} />
             <Route path="/gravity" element={<Gravity />} />
             <Route path="/wearable" element={<Wearable />} />
+            <Route path="/gamification" element={<Gamification />} />
             <Route path="/history" element={<History />} />
+            <Route path="/mission" element={<Mission />} />
             <Route path="*" element={<Status />} />
           </Routes>
         </Suspense>
