@@ -5,11 +5,15 @@ Team Star Busters, University of Lucknow — NASA Space Apps Challenge 2026, *Cr
 
 SAKTI learns each astronaut's own baseline, shows which body systems are changing, and gives a clear next step. Its central component, **GRAVITY-HEART**, is a personalised, physics-based model of the circulation that estimates how blood pressure responds to standing after time in weightlessness, on the Moon, on Mars, or on Earth.
 
+> **[Read the SAKTI Research Paper (PDF)](SAKTI_Research_Paper.pdf)**  
+> 8-page research paper covering the cardiovascular model, wearable system, evaluation results, and medical decision-support boundaries.  
+> **[Open PDF](https://github.com/HarshPrajapati7/Shakti/blob/main/SAKTI_Research_Paper.pdf)** · **[Download PDF](https://github.com/HarshPrajapati7/Shakti/raw/main/SAKTI_Research_Paper.pdf)**
+
 ## Try it now
 
 - **Windows desktop application (one click):** download [`sakti.exe`](https://github.com/HarshPrajapati7/Shakti/releases/download/v1.0.0/sakti.exe) and run it. No installation or network is required.
 - **Video demonstration:** https://youtu.be/w6IXvcISsVY
-- **Research paper (PDF):** [read it here](https://github.com/HarshPrajapati7/Shakti/blob/main/SAKTI_Research_Paper.pdf) · [direct download](https://github.com/HarshPrajapati7/Shakti/raw/main/SAKTI_Research_Paper.pdf)
+- **Research paper (PDF):** [read it here](SAKTI_Research_Paper.pdf) · [direct download](https://github.com/HarshPrajapati7/Shakti/raw/main/SAKTI_Research_Paper.pdf)
 - **Web build (any OS, Node 20+):**
   ```powershell
   cd apps\web; npm ci; npm run dev     # http://localhost:5173
