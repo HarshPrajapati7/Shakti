@@ -1,4 +1,6 @@
-# SAKTI (ASTRA-HEALTH)
+# SAKTI
+
+We have made a wearable Heath montoring Device that is Directly connects with the suite and shows the health Stats.
 
 **A modular astronaut health-monitoring prototype combining mechanistic cardiovascular simulation and wearable physiological-signal models.**
 Team Star Busters, University of Lucknow — NASA Space Apps Challenge 2026, *Create Health Monitoring Software for Astronauts on Space Missions*.
