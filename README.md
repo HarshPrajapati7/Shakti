@@ -7,7 +7,7 @@ SAKTI learns each astronaut's own baseline, shows which body systems are changin
 
 > **[Read the SAKTI Research Paper (PDF)](Sakti.pdf)**  
 > 8-page research paper covering the cardiovascular model, wearable system, evaluation results, and medical decision-support boundaries.  
-> **[Open PDF](https://github.com/HarshPrajapati7/Shakti/blob/main/SAKTI_Research_Paper.pdf)** · **[Download PDF](https://github.com/HarshPrajapati7/Shakti/raw/main/SAKTI_Research_Paper.pdf)**
+> **[Open PDF](https://github.com/HarshPrajapati7/Shakti/blob/main/Sakti.pdf)** · **[Download PDF](https://github.com/HarshPrajapati7/Shakti/raw/main/Sakti.pdf)**
 
 ## Try it now
 
